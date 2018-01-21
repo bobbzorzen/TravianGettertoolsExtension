@@ -1,33 +1,43 @@
-var tmp = "";
-setInterval(function() {
-    console.log("Background-script successfully loaded");
-    console.log(chrome.tabs)
+var troopInformation = {};
+var travianTab = null;
+var gettertoolsTab = null;
+
+function getTabInformation() {
     chrome.tabs.getAllInWindow(function(tabs){
-        // console.log("CALLBACK: ", tabs)
         for(var index in tabs) {
             var tab = tabs[index]
-            if(tab.url.match(/:\/\/t..\.travian.com/)) {
-                console.log("travian tab is active: ", tab);
-                chrome.tabs.executeScript(
-                    tab.id, 
-                    {file:"loadTroops.js"}, 
-                    function (result) {
-                        tmp = result;
-                        console.log("Callback: ", result);
-                        chrome.storage.local.set({"troops":tmp});
-                    }
-                );
-            } else if(tab.url.match(/:\/\/www\.gettertools.com/)) {
-                console.log("Gettertools tab is active: ", tab);
-                console.log("DATA: ", tmp);
-                chrome.tabs.executeScript(
-                    tab.id, 
-                    {file:"saveTroops.js"}, 
-                    function (result) {
-                        console.log("Callbackgettertools: ", result);
-                    }
-                );
+            if(tab.url.match(/:\/\/t..\.travian.com\/dorf1/)) {
+                travianTab = tab.id;
+            }
+            else if(tab.url.match(/:\/\/www\.gettertools.com/)) {
+                gettertoolsTab = tab.id;
             }
         }
     });
-}, 1000*5);
+}
+
+function getTroopData() {
+    if(travianTab && travianTab != undefined) {
+        chrome.tabs.executeScript(
+            travianTab, 
+            {file:"loadTroops.js"}, 
+            function (result) {
+                if(result) {
+                    troopInformation[result[0].village] = result[0].troops;
+                    chrome.storage.local.set({"troops":troopInformation});
+                }
+            }
+        );
+    }
+}
+
+function updateGetterTools() {
+    if(gettertoolsTab) {
+        chrome.tabs.executeScript(gettertoolsTab, {file:"saveTroops.js"});
+    }
+}
+
+getTabInformation(); //get initial troop information
+setInterval(getTabInformation, 1000*60) // Update tab information once per minute
+setInterval(getTroopData, 1000*5) // Update troop information once every five seconds
+setInterval(updateGetterTools, 1000*10) // Update gettertools page once per minute

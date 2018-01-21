@@ -30,7 +30,11 @@ var TROOP_INDEX = {
     "Fire Catapult": 7,
     "Senator": 8
 }
-//TODO: return the village name with the list of troops
+
+function getVillageName() {
+    return document.querySelector("#villageNameField").innerText;
+}
+
 var troops = []
 var listOfTroops = document.querySelectorAll("#troops tr")
 for(var index = 0; index < listOfTroops.length; index++) {
@@ -48,4 +52,8 @@ for(var index = 0; index < listOfTroops.length; index++) {
         troops.push(troop);
     }
 }
-troops
+var retval = {
+    "village": getVillageName(),
+    "troops": troops
+}
+retval
