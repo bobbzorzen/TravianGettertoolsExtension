@@ -23,9 +23,12 @@ async function updateTroopsRow(villageName, troops) {
         row.querySelector(".edit input").click();
     }
 }
-
-chrome.storage.local.get('troops', function (items) {
-    for(villageName in items.troops){
-        updateTroopsRow(villageName, items.troops[villageName]);
+async function updateTroopsRows(troops) {
+    for(villageName in troops){
+        updateTroopsRow(villageName, troops[villageName]);
+        await sleep(2000);
     }
+}
+chrome.storage.local.get('troops', function (items) {
+    updateTroopsRows(items.troops);
 });
