@@ -1,0 +1,24 @@
+{
+    "manifest_version": 2,
+  
+    "name": "Travian Gettertools uniter",
+    "description": "Allows interactions between Travian and Gettertools",
+    "version": "1.0",
+  
+    "browser_action": {
+        "default_icon": "icon.ico",
+        "default_popup": "popup.html"
+    },
+    "background": {
+        "scripts": ["jquery-3.2.1.min.js", "background.js"],
+        "persistent": false
+    },
+    "permissions": [
+        "tabs", 
+        "notifications",
+        "management",
+        "storage",
+        "http://*/",
+        "https://*/"
+    ]
+}
